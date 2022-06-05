@@ -1,23 +1,46 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { store } from './app/store';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import './index.css';
+import React, { createContext } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
 
-const container = document.getElementById('root')!;
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { Auth, getAuth } from "firebase/auth";
+import { Firestore, getFirestore } from "firebase/firestore";
+
+import reportWebVitals from "./reportWebVitals";
+
+const container = document.getElementById("root")!;
 const root = createRoot(container);
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3iC3r5W6t5fnxQB3vCAsVHqrpiUQTQgg",
+  authDomain: "chat-b7d04.firebaseapp.com",
+  projectId: "chat-b7d04",
+  storageBucket: "chat-b7d04.appspot.com",
+  messagingSenderId: "740364360638",
+  appId: "1:740364360638:web:481421ec5490418fb1b7ef",
+  measurementId: "G-T4WL3PLWE6",
+};
+
+interface FirebaseContextProps {
+  auth: Auth;
+  db: Firestore;
+  firebase: FirebaseApp;
+}
+
+const firebase = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(firebase);
+
+const auth = getAuth();
+const db = getFirestore();
+
+export const FirebaseContext = createContext<FirebaseContextProps>({ firebase, auth, db });
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <FirebaseContext.Provider value={{ firebase, auth, db }}>
       <App />
-    </Provider>
+    </FirebaseContext.Provider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
